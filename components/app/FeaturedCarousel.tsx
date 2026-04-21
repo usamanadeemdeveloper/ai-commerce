@@ -52,7 +52,7 @@ export function FeaturedCarousel({ products }: FeaturedCarouselProps) {
   }
 
   return (
-    <div className="relative w-full bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950">
+    <div className="relative w-full bg-linear-to-br from-zinc-900 via-zinc-800 to-zinc-900 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950">
       <Carousel
         setApi={setApi}
         opts={{
@@ -68,7 +68,7 @@ export function FeaturedCarousel({ products }: FeaturedCarouselProps) {
         ]}
         className="w-full"
       >
-        <CarouselContent className="-ml-0">
+        <CarouselContent className="ml-0">
           {products.map((product) => (
             <CarouselItem key={product._id} className="pl-0">
               <FeaturedSlide product={product} />
@@ -82,11 +82,11 @@ export function FeaturedCarousel({ products }: FeaturedCarouselProps) {
       </Carousel>
 
       {/* Dot indicators */}
-      {count > 1 && (
+      {products.length > 1 && (
         <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2 sm:bottom-6">
-          {Array.from({ length: count }).map((_, index) => (
+          {products.map((product, index) => (
             <button
-              key={`dot-${index}`}
+              key={product._id}
               type="button"
               onClick={() => scrollTo(index)}
               className={cn(
@@ -112,7 +112,7 @@ function FeaturedSlide({ product }: FeaturedSlideProps) {
   const mainImage = product.images?.[0]?.asset?.url;
 
   return (
-    <div className="flex min-h-[400px] flex-col md:min-h-[450px] md:flex-row lg:min-h-[500px]">
+    <div className="flex min-h-100 flex-col md:min-h-112.5 md:flex-row lg:min-h-125">
       {/* Image Section - Left side (60% on desktop) */}
       <div className="relative h-64 w-full md:h-auto md:w-3/5">
         {mainImage ? (
@@ -131,8 +131,8 @@ function FeaturedSlide({ product }: FeaturedSlideProps) {
         )}
 
         {/* Gradient overlay for image edge blending */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-zinc-900/90 dark:to-zinc-950/90 hidden md:block" />
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-900/90 via-transparent to-transparent md:hidden" />
+        <div className="absolute inset-0 bg-linear-to-r from-transparent via-transparent to-zinc-900/90 dark:to-zinc-950/90 hidden md:block" />
+        <div className="absolute inset-0 bg-linear-to-t from-zinc-900/90 via-transparent to-transparent md:hidden" />
       </div>
 
       {/* Content Section - Right side (40% on desktop) */}

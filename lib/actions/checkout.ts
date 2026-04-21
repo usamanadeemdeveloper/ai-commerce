@@ -1,33 +1,29 @@
 "use server";
 
-import { auth, currentUser } from "@clerk/nextjs/server";
-import Stripe from "stripe";
 import { getOrCreateStripeCustomer } from "@/lib/actions/customer";
 import { client } from "@/sanity/lib/client";
 import { PRODUCTS_BY_IDS_QUERY } from "@/sanity/queries/products";
+import { auth, currentUser } from "@clerk/nextjs/server";
+import Stripe from "stripe";
+import type { CartItem } from "../store/cart-store";
 
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error("STRIPE_SECRET_KEY is not defined");
 }
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2026-01-28.clover",
-});
-
-// Types
-interface CartItem {
-  productId: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image?: string;
-}
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 interface CheckoutResult {
   success: boolean;
   url?: string;
   error?: string;
 }
+
+type SessionParams = NonNullable<
+  Parameters<typeof stripe.checkout.sessions.create>[0]
+>;
+
+type LineItem = NonNullable<SessionParams["line_items"]>[number];
 
 /**
  * Creates a Stripe Checkout Session from cart items
@@ -93,8 +89,8 @@ export async function createCheckoutSession(
     }
 
     // 5. Create Stripe line items with validated prices
-    const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] =
-      validatedItems.map(({ product, quantity }) => ({
+    const lineItems: LineItem[] = validatedItems.map(
+      ({ product, quantity }) => ({
         price_data: {
           currency: "gbp",
           product_data: {
@@ -107,7 +103,8 @@ export async function createCheckoutSession(
           unit_amount: Math.round((product.price ?? 0) * 100), // Convert to pence
         },
         quantity,
-      }));
+      }),
+    );
 
     // 6. Get or create Stripe customer
     const userEmail = user.emailAddresses[0]?.emailAddress ?? "";

@@ -59,6 +59,13 @@ export const productType = defineType({
       validation: (rule) => [rule.required().error("Category is required")],
     }),
     defineField({
+      name: "store",
+      type: "reference",
+      to: [{ type: "store" }],
+      group: "details",
+      description: "Store that owns this product.",
+    }),
+    defineField({
       name: "material",
       type: "string",
       group: "details",
@@ -130,11 +137,12 @@ export const productType = defineType({
       subtitle: "category.title",
       media: "images.0",
       price: "price",
+      storeName: "store.name",
     },
-    prepare({ title, subtitle, media, price }) {
+    prepare({ title, subtitle, media, price, storeName }) {
       return {
         title,
-        subtitle: `${subtitle ? subtitle + " • " : ""}£${price ?? 0}`,
+        subtitle: `${subtitle ? subtitle + " • " : ""}£${price ?? 0}${storeName ? ` • ${storeName}` : ""}`,
         media,
       };
     },

@@ -1,13 +1,13 @@
-import { auth } from "@clerk/nextjs/server";
-import { ArrowRight, Package } from "lucide-react";
 import Link from "next/link";
-import { StackedProductImages } from "@/components/app/StackedProductImages";
+import { auth } from "@clerk/nextjs/server";
+import { Package, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
-import { getOrderStatus } from "@/lib/constants/orderStatus";
-import { formatDate, formatOrderNumber, formatPrice } from "@/lib/utils";
 import { sanityFetch } from "@/sanity/lib/live";
 import { ORDERS_BY_USER_QUERY } from "@/sanity/queries/orders";
+import { getOrderStatus } from "@/lib/constants/orderStatus";
+import { formatPrice, formatDate, formatOrderNumber } from "@/lib/utils";
+import { StackedProductImages } from "@/components/app/StackedProductImages";
 
 export const metadata = {
   title: "Your Orders | Furniture Shop",

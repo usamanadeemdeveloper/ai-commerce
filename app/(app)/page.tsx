@@ -1,9 +1,5 @@
-import { CategoryTiles } from "@/components/app/LandingPage/CategoryTiles";
-import { FeaturedCarousel } from "@/components/app/LandingPage/FeaturedCarousel";
-import { FeaturedCarouselSkeleton } from "@/components/app/LandingPage/FeaturedCarouselSkeleton";
-import { ProductSection } from "@/components/app/LandingPage/ProductSection";
+import { Suspense } from "react";
 import { sanityFetch } from "@/sanity/lib/live";
-import { ALL_CATEGORIES_QUERY } from "@/sanity/queries/categories";
 import {
   FEATURED_PRODUCTS_QUERY,
   FILTER_PRODUCTS_BY_NAME_QUERY,
@@ -11,7 +7,11 @@ import {
   FILTER_PRODUCTS_BY_PRICE_DESC_QUERY,
   FILTER_PRODUCTS_BY_RELEVANCE_QUERY,
 } from "@/sanity/queries/products";
-import { Suspense } from "react";
+import { ALL_CATEGORIES_QUERY } from "@/sanity/queries/categories";
+import { ProductSection } from "@/components/app/ProductSection";
+import { CategoryTiles } from "@/components/app/CategoryTiles";
+import { FeaturedCarousel } from "@/components/app/FeaturedCarousel";
+import { FeaturedCarouselSkeleton } from "@/components/app/FeaturedCarouselSkeleton";
 
 interface PageProps {
   searchParams: Promise<{
@@ -38,9 +38,7 @@ export default async function HomePage({ searchParams }: PageProps) {
   const sort = params.sort ?? "name";
   const inStock = params.inStock === "true";
 
-  // Select query based on sort parameter
   const getQuery = () => {
-    // If searching and sort is relevance, use relevance query
     if (searchQuery && sort === "relevance") {
       return FILTER_PRODUCTS_BY_RELEVANCE_QUERY;
     }

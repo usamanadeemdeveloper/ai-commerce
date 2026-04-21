@@ -1,18 +1,15 @@
 "use client";
 
-import Link from "next/link";
-import { Package, ShoppingBag, Sparkles, User } from "lucide-react";
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton,
-} from "@clerk/nextjs/";
 import { Button } from "@/components/ui/button";
 import { useCartActions, useTotalItems } from "@/lib/store/cart-store-provider";
 import { useChatActions, useIsChatOpen } from "@/lib/store/chat-store-provider";
+import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
+import { Package, ShoppingBag, Sparkles, User } from "lucide-react";
+import Link from "next/link";
 
 export function Header() {
+  const { isSignedIn } = useUser();
+
   const { openCart } = useCartActions();
   const { openChat } = useChatActions();
   const isChatOpen = useIsChatOpen();
@@ -31,20 +28,20 @@ export function Header() {
         {/* Actions */}
         <div className="flex items-center gap-2">
           {/* My Orders - Only when signed in */}
-          <SignedIn>
+          {isSignedIn && (
             <Button asChild>
               <Link href="/orders" className="flex items-center gap-2">
                 <Package className="h-5 w-5" />
                 <span className="text-sm font-medium">My Orders</span>
               </Link>
             </Button>
-          </SignedIn>
+          )}
 
           {/* AI Shopping Assistant */}
           {!isChatOpen && (
             <Button
               onClick={openChat}
-              className="gap-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md shadow-amber-200/50 transition-all hover:from-amber-600 hover:to-orange-600 hover:shadow-lg hover:shadow-amber-300/50 dark:shadow-amber-900/30 dark:hover:shadow-amber-800/40"
+              className="gap-2 bg-linear-to-r from-amber-500 to-orange-500 text-white shadow-md shadow-amber-200/50 transition-all hover:from-amber-600 hover:to-orange-600 hover:shadow-lg hover:shadow-amber-300/50 dark:shadow-amber-900/30 dark:hover:shadow-amber-800/40"
             >
               <Sparkles className="h-4 w-4" />
               <span className="text-sm font-medium">Ask AI</span>
@@ -68,7 +65,7 @@ export function Header() {
           </Button>
 
           {/* User */}
-          <SignedIn>
+          {isSignedIn ? (
             <UserButton
               afterSwitchSessionUrl="/"
               appearance={{
@@ -85,15 +82,14 @@ export function Header() {
                 />
               </UserButton.MenuItems>
             </UserButton>
-          </SignedIn>
-          <SignedOut>
+          ) : (
             <SignInButton mode="modal">
               <Button variant="ghost" size="icon">
                 <User className="h-5 w-5" />
                 <span className="sr-only">Sign in</span>
               </Button>
             </SignInButton>
-          </SignedOut>
+          )}
         </div>
       </div>
     </header>

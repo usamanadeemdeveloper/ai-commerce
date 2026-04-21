@@ -299,7 +299,7 @@ export function ProductFilters({ categories }: ProductFiltersProps) {
               maxPrice: max < 5000 ? max : null,
             })
           }
-          className={`mt-4 ${isPriceActive ? "[&_[role=slider]]:border-amber-500 [&_[role=slider]]:ring-amber-500" : ""}`}
+          className={`mt-4 ${isPriceActive ? "**:[[role=slider]]:border-amber-500 **:[[role=slider]]:ring-amber-500" : ""}`}
         />
       </div>
 

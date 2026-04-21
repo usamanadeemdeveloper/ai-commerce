@@ -20,6 +20,29 @@ export const ALL_CATEGORIES_QUERY = defineQuery(`*[
 }`);
 
 /**
+ * Store-scoped categories for storefront routes.
+ */
+export const STOREFRONT_CATEGORIES_QUERY = defineQuery(`*[
+  _type == "category"
+  && (
+    $storeSlug == ""
+    || !defined(store)
+    || store->slug.current == $storeSlug
+  )
+] | order(title asc) {
+  _id,
+  title,
+  "slug": slug.current,
+  "image": image{
+    asset->{
+      _id,
+      url
+    },
+    hotspot
+  }
+}`);
+
+/**
  * Get category by slug
  */
 export const CATEGORY_BY_SLUG_QUERY = defineQuery(`*[

@@ -1,10 +1,9 @@
 "use client";
 
 import type { CartItem } from "@/lib/store/cart-store";
-import type { PRODUCTS_BY_IDS_QUERYResult } from "@/sanity.types";
+import { client } from "@/sanity/lib/client";
 import { PRODUCTS_BY_IDS_QUERY } from "@/sanity/queries/products";
-import { useQuery } from "@sanity/sdk-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 export interface StockInfo {
   productId: string;
@@ -30,13 +29,12 @@ interface UseCartStockReturn {
 export function useCartStock(items: CartItem[]): UseCartStockReturn {
   const [stockMap, setStockMap] = useState<StockMap>(new Map());
   const [isLoading, setIsLoading] = useState(false);
-  const { data: products }: { data: PRODUCTS_BY_IDS_QUERYResult } = useQuery({
-    query: PRODUCTS_BY_IDS_QUERY,
-    params: {
-      ids: items.map((item: CartItem) => item.productId),
-    },
-    
-  });
+
+  // Memoize product IDs to use as stable dependency
+  const productIds = useMemo(
+    () => items.map((item) => item.productId),
+    [items],
+  );
 
   const fetchStock = useCallback(async () => {
     if (items.length === 0) {
@@ -47,6 +45,10 @@ export function useCartStock(items: CartItem[]): UseCartStockReturn {
     setIsLoading(true);
 
     try {
+      const products = await client.fetch(PRODUCTS_BY_IDS_QUERY, {
+        ids: productIds,
+      });
+
       const newStockMap = new Map<string, StockInfo>();
 
       for (const item of items) {
@@ -70,11 +72,22 @@ export function useCartStock(items: CartItem[]): UseCartStockReturn {
     } finally {
       setIsLoading(false);
     }
-  }, [items, products]);
+  }, [items, productIds]);
 
   useEffect(() => {
-    fetchStock();
-  }, [fetchStock]);
+    fetchStock(); // initial fetch
+
+    if (items.length === 0) return;
+
+    // Live updates - no auth required
+    const subscription = client
+      .listen(PRODUCTS_BY_IDS_QUERY, { ids: productIds })
+      .subscribe(() => {
+        fetchStock();
+      });
+
+    return () => subscription.unsubscribe();
+  }, [fetchStock, items, productIds]);
 
   const hasStockIssues = Array.from(stockMap.values()).some(
     (info) => info.isOutOfStock || info.exceedsStock,

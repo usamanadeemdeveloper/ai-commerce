@@ -17,6 +17,7 @@ export function CartSummary({ hasStockIssues = false }: CartSummaryProps) {
   const totalPrice = useTotalPrice();
   const totalItems = useTotalItems();
   const { closeCart } = useCartActions();
+  
 
   if (totalItems === 0) return null;
 

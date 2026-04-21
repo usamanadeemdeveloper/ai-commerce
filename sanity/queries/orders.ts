@@ -19,12 +19,80 @@ export const ORDERS_BY_USER_QUERY = defineQuery(`*[
 }`);
 
 /**
+ * Store-scoped orders by Clerk user ID for storefront routes.
+ */
+export const STOREFRONT_ORDERS_BY_USER_QUERY = defineQuery(`*[
+  _type == "order"
+  && clerkUserId == $clerkUserId
+  && (
+    $storeSlug == ""
+    || !defined(store)
+    || store->slug.current == $storeSlug
+  )
+] | order(createdAt desc) {
+  _id,
+  orderNumber,
+  total,
+  status,
+  createdAt,
+  "itemCount": count(items),
+  "itemNames": items[].product->name,
+  "itemImages": items[].product->images[0].asset->url
+}`);
+
+/**
  * Get single order by ID with full details
  * Used on order detail page
  */
 export const ORDER_BY_ID_QUERY = defineQuery(`*[
   _type == "order"
   && _id == $id
+][0] {
+  _id,
+  orderNumber,
+  clerkUserId,
+  email,
+  items[]{
+    _key,
+    quantity,
+    priceAtPurchase,
+    product->{
+      _id,
+      name,
+      "slug": slug.current,
+      "image": images[0]{
+        asset->{
+          _id,
+          url
+        }
+      }
+    }
+  },
+  total,
+  status,
+  address{
+    name,
+    line1,
+    line2,
+    city,
+    postcode,
+    country
+  },
+  stripePaymentId,
+  createdAt
+}`);
+
+/**
+ * Store-scoped order detail by ID for storefront routes.
+ */
+export const STOREFRONT_ORDER_BY_ID_QUERY = defineQuery(`*[
+  _type == "order"
+  && _id == $id
+  && (
+    $storeSlug == ""
+    || !defined(store)
+    || store->slug.current == $storeSlug
+  )
 ][0] {
   _id,
   orderNumber,
@@ -82,4 +150,3 @@ export const ORDER_BY_STRIPE_PAYMENT_ID_QUERY = defineQuery(`*[
   _type == "order"
   && stripePaymentId == $stripePaymentId
 ][0]{ _id }`);
-

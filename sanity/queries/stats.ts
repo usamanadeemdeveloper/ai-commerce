@@ -3,18 +3,25 @@ import { defineQuery } from "next-sanity";
 /**
  * Get total product count
  */
-export const PRODUCT_COUNT_QUERY = defineQuery(`count(*[_type == "product"])`);
+export const PRODUCT_COUNT_QUERY = defineQuery(`count(*[
+  _type == "product"
+  && store._ref == $storeId
+])`);
 
 /**
  * Get total order count
  */
-export const ORDER_COUNT_QUERY = defineQuery(`count(*[_type == "order"])`);
+export const ORDER_COUNT_QUERY = defineQuery(`count(*[
+  _type == "order"
+  && store._ref == $storeId
+])`);
 
 /**
  * Get total revenue from completed orders
  */
 export const TOTAL_REVENUE_QUERY = defineQuery(`math::sum(*[
   _type == "order"
+  && store._ref == $storeId
   && status in ["paid", "shipped", "delivered"]
 ].total)`);
 
@@ -28,6 +35,7 @@ export const TOTAL_REVENUE_QUERY = defineQuery(`math::sum(*[
  */
 export const ORDERS_LAST_7_DAYS_QUERY = defineQuery(`*[
   _type == "order"
+  && store._ref == $storeId
   && createdAt >= $startDate
   && !(_id in path("drafts.**"))
 ] | order(createdAt desc) {
@@ -50,10 +58,10 @@ export const ORDERS_LAST_7_DAYS_QUERY = defineQuery(`*[
  * Excludes draft documents to get accurate counts
  */
 export const ORDER_STATUS_DISTRIBUTION_QUERY = defineQuery(`{
-  "paid": count(*[_type == "order" && status == "paid" && !(_id in path("drafts.**"))]),
-  "shipped": count(*[_type == "order" && status == "shipped" && !(_id in path("drafts.**"))]),
-  "delivered": count(*[_type == "order" && status == "delivered" && !(_id in path("drafts.**"))]),
-  "cancelled": count(*[_type == "order" && status == "cancelled" && !(_id in path("drafts.**"))])
+  "paid": count(*[_type == "order" && store._ref == $storeId && status == "paid" && !(_id in path("drafts.**"))]),
+  "shipped": count(*[_type == "order" && store._ref == $storeId && status == "shipped" && !(_id in path("drafts.**"))]),
+  "delivered": count(*[_type == "order" && store._ref == $storeId && status == "delivered" && !(_id in path("drafts.**"))]),
+  "cancelled": count(*[_type == "order" && store._ref == $storeId && status == "cancelled" && !(_id in path("drafts.**"))])
 }`);
 
 /**
@@ -62,6 +70,7 @@ export const ORDER_STATUS_DISTRIBUTION_QUERY = defineQuery(`{
  */
 export const TOP_SELLING_PRODUCTS_QUERY = defineQuery(`*[
   _type == "order"
+  && store._ref == $storeId
   && status in ["paid", "shipped", "delivered"]
   && !(_id in path("drafts.**"))
 ] {
@@ -76,7 +85,10 @@ export const TOP_SELLING_PRODUCTS_QUERY = defineQuery(`*[
 /**
  * Get all products with stock and sales data for inventory analysis
  */
-export const PRODUCTS_INVENTORY_QUERY = defineQuery(`*[_type == "product"] {
+export const PRODUCTS_INVENTORY_QUERY = defineQuery(`*[
+  _type == "product"
+  && store._ref == $storeId
+] {
   _id,
   name,
   price,
@@ -90,6 +102,7 @@ export const PRODUCTS_INVENTORY_QUERY = defineQuery(`*[_type == "product"] {
  */
 export const UNFULFILLED_ORDERS_QUERY = defineQuery(`*[
   _type == "order"
+  && store._ref == $storeId
   && status == "paid"
   && !(_id in path("drafts.**"))
 ] | order(createdAt asc) {
@@ -108,12 +121,14 @@ export const UNFULFILLED_ORDERS_QUERY = defineQuery(`*[
 export const REVENUE_BY_PERIOD_QUERY = defineQuery(`{
   "currentPeriod": math::sum(*[
     _type == "order"
+    && store._ref == $storeId
     && status in ["paid", "shipped", "delivered"]
     && createdAt >= $currentStart
     && !(_id in path("drafts.**"))
   ].total),
   "previousPeriod": math::sum(*[
     _type == "order"
+    && store._ref == $storeId
     && status in ["paid", "shipped", "delivered"]
     && createdAt >= $previousStart
     && createdAt < $currentStart
@@ -121,11 +136,13 @@ export const REVENUE_BY_PERIOD_QUERY = defineQuery(`{
   ].total),
   "currentOrderCount": count(*[
     _type == "order"
+    && store._ref == $storeId
     && createdAt >= $currentStart
     && !(_id in path("drafts.**"))
   ]),
   "previousOrderCount": count(*[
     _type == "order"
+    && store._ref == $storeId
     && createdAt >= $previousStart
     && createdAt < $currentStart
     && !(_id in path("drafts.**"))
