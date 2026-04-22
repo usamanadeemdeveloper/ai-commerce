@@ -2,9 +2,9 @@
  * This configuration file lets you run `$ sanity [command]` in this folder
  * Go to https://www.sanity.io/docs/cli to learn more.
  **/
-import { defineCliConfig } from "sanity/cli";
 
 import { loadEnvConfig } from "@next/env";
+import { defineCliConfig } from "sanity/cli";
 
 // Load .env.local for Sanity CLI
 loadEnvConfig(process.cwd());
@@ -20,13 +20,9 @@ if (!projectId || !dataset) {
 }
 
 export default defineCliConfig({
+  app: {
+    organizationId,
+    entry: "./app/(admin)/admin/page.tsx",
+  },
   api: { projectId, dataset },
-  ...(organizationId
-    ? {
-        app: {
-          organizationId,
-          entry: "./app/(admin)/admin/page.tsx",
-        },
-      }
-    : {}),
 });

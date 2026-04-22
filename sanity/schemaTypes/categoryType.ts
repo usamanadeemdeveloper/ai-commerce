@@ -26,12 +26,6 @@ export const categoryType = defineType({
       ],
     }),
     defineField({
-      name: "store",
-      type: "reference",
-      to: [{ type: "store" }],
-      description: "Store that owns this category.",
-    }),
-    defineField({
       name: "image",
       type: "image",
       options: {
@@ -44,14 +38,6 @@ export const categoryType = defineType({
     select: {
       title: "title",
       media: "image",
-      storeName: "store.name",
-    },
-    prepare({ title, media, storeName }) {
-      return {
-        title,
-        subtitle: storeName ? `Store: ${storeName}` : undefined,
-        media,
-      };
     },
   },
 });

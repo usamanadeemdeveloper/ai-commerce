@@ -1,6 +1,6 @@
-import { gateway, type Tool, ToolLoopAgent } from "ai";
-import { searchProductsTool } from "./tools/search-products";
+import { gateway, stepCountIs, type Tool, ToolLoopAgent } from "ai";
 import { createGetMyOrdersTool } from "./tools/get-my-orders";
+import { searchProductsTool } from "./tools/search-products";
 
 interface ShoppingAgentOptions {
   userId: string | null;
@@ -179,6 +179,19 @@ const notAuthenticatedInstructions = `
 The user is not signed in. If they ask about orders, politely let them know they need to sign in to view their order history. You can say something like:
 "To check your orders, you'll need to sign in first. Click the user icon in the top right to sign in or create an account."`;
 
+const imageInstructions = `
+
+## Image Search
+When the user uploads an image of furniture:
+1. Analyze the image and identify:
+   - category: one of "sofas", "chairs", "tables", "storage", "beds", "lighting"
+   - material: one of "wood", "metal", "fabric", "leather", "glass" (or "" if unclear)
+   - color: one of "black", "white", "oak", "walnut", "grey", "natural" (or "" if unclear)
+2. Immediately call searchProducts with those attributes — do NOT ask the user to describe it
+3. Start your response with a brief description of what you see, e.g. "I can see a walnut wood dining table — here are similar products:"
+4. If the image is not furniture, politely say you can only search for furniture products
+`;
+
 /**
  * Creates a shopping agent with tools based on user authentication status
  */
@@ -187,8 +200,8 @@ export function createShoppingAgent({ userId }: ShoppingAgentOptions) {
 
   // Build instructions based on authentication
   const instructions = isAuthenticated
-    ? baseInstructions + ordersInstructions
-    : baseInstructions + notAuthenticatedInstructions;
+    ? baseInstructions + imageInstructions + ordersInstructions
+    : baseInstructions + imageInstructions + notAuthenticatedInstructions;
 
   // Build tools - only include orders tool if authenticated
   const getMyOrdersTool = createGetMyOrdersTool(userId);
@@ -205,5 +218,18 @@ export function createShoppingAgent({ userId }: ShoppingAgentOptions) {
     model: gateway("anthropic/claude-sonnet-4.5"),
     instructions,
     tools,
+
+    // ✅ COST CONTROL - these actually exist:
+    maxOutputTokens: 1024, // limits output tokens per step
+    temperature: 0.3, // lower = more focused responses
+    stopWhen: stepCountIs(3), // prevent runaway tool loops (default is 20!)
+
+    // ✅ MONITORING - hook to log usage per step
+    onStepFinish: (step) => {
+      console.log("tokens used:", step.usage);
+    },
+
+    // ✅ RELIABILITY
+    maxRetries: 1, // default is 2, reducing saves on failed calls
   });
 }

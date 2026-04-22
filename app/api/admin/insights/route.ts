@@ -1,12 +1,12 @@
-import { generateText, gateway } from "ai";
+import { gateway, generateText } from "ai";
 import { client } from "@/sanity/lib/client";
 import {
-  ORDERS_LAST_7_DAYS_QUERY,
   ORDER_STATUS_DISTRIBUTION_QUERY,
-  TOP_SELLING_PRODUCTS_QUERY,
+  ORDERS_LAST_7_DAYS_QUERY,
   PRODUCTS_INVENTORY_QUERY,
-  UNFULFILLED_ORDERS_QUERY,
   REVENUE_BY_PERIOD_QUERY,
+  TOP_SELLING_PRODUCTS_QUERY,
+  UNFULFILLED_ORDERS_QUERY,
 } from "@/sanity/queries/stats";
 
 interface OrderItem {
@@ -124,7 +124,7 @@ export async function GET() {
       Array.from(productSalesMap.entries()).map(([id, data]) => [
         id,
         data.totalQuantity,
-      ])
+      ]),
     );
 
     const needsRestock = productsInventory
@@ -163,7 +163,7 @@ export async function GET() {
     const avgOrderValue =
       recentOrders.length > 0
         ? recentOrders.reduce((sum, o) => sum + (o.total || 0), 0) /
-          recentOrders.length
+        recentOrders.length
         : 0;
 
     // Prepare data summary for AI
@@ -204,7 +204,7 @@ export async function GET() {
           itemCount: o.itemCount,
         })),
         urgentOrders: unfulfilledOrders.filter(
-          (o) => getDaysSinceOrder(o.createdAt) > 2
+          (o) => getDaysSinceOrder(o.createdAt) > 2,
         ).length,
       },
     };
@@ -329,7 +329,7 @@ Generate insights in the required JSON format.`,
         success: false,
         error: "Failed to generate insights",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

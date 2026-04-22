@@ -1,9 +1,6 @@
-import {
-  COLORS_SANITY_LIST,
-  MATERIALS_SANITY_LIST,
-} from "@/lib/constants/filters";
 import { PackageIcon } from "@sanity/icons";
 import { defineField, defineType } from "sanity";
+import { MATERIALS_SANITY_LIST, COLORS_SANITY_LIST } from "@/lib/constants/filters";
 
 export const productType = defineType({
   name: "product",
@@ -57,13 +54,6 @@ export const productType = defineType({
       to: [{ type: "category" }],
       group: "details",
       validation: (rule) => [rule.required().error("Category is required")],
-    }),
-    defineField({
-      name: "store",
-      type: "reference",
-      to: [{ type: "store" }],
-      group: "details",
-      description: "Store that owns this product.",
     }),
     defineField({
       name: "material",
@@ -137,12 +127,11 @@ export const productType = defineType({
       subtitle: "category.title",
       media: "images.0",
       price: "price",
-      storeName: "store.name",
     },
-    prepare({ title, subtitle, media, price, storeName }) {
+    prepare({ title, subtitle, media, price }) {
       return {
         title,
-        subtitle: `${subtitle ? subtitle + " • " : ""}£${price ?? 0}${storeName ? ` • ${storeName}` : ""}`,
+        subtitle: `${subtitle ? subtitle + " • " : ""}£${price ?? 0}`,
         media,
       };
     },

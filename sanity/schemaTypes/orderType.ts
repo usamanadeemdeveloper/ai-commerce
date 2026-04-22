@@ -90,13 +90,6 @@ export const orderType = defineType({
       description: "Reference to the customer record",
     }),
     defineField({
-      name: "store",
-      type: "reference",
-      to: [{ type: "store" }],
-      group: "customer",
-      description: "Store that owns this order.",
-    }),
-    defineField({
       name: "clerkUserId",
       type: "string",
       group: "customer",
@@ -143,12 +136,11 @@ export const orderType = defineType({
       email: "email",
       total: "total",
       status: "status",
-      storeName: "store.name",
     },
-    prepare({ orderNumber, email, total, status, storeName }) {
+    prepare({ orderNumber, email, total, status }) {
       return {
         title: `Order ${orderNumber ?? "N/A"}`,
-        subtitle: `${email ?? "No email"} • £${total ?? 0} • ${status ?? "paid"}${storeName ? ` • ${storeName}` : ""}`,
+        subtitle: `${email ?? "No email"} • £${total ?? 0} • ${status ?? "paid"}`,
       };
     },
   },

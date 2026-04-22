@@ -17,19 +17,6 @@ const PRODUCT_FILTER_CONDITIONS = `
   && ($inStock == false || stock > 0)
 `;
 
-/** Store scoping for storefront queries with backward-compatible fallback */
-const STOREFRONT_STORE_CONDITION = `
-  && (
-    $storeSlug == ""
-    || !defined(store)
-    || store->slug.current == $storeSlug
-  )
-`;
-
-/** Product filters with storefront store scoping */
-const STOREFRONT_PRODUCT_FILTER_CONDITIONS = `${PRODUCT_FILTER_CONDITIONS}
-${STOREFRONT_STORE_CONDITION}`;
-
 /** Projection for filtered product lists (includes multiple images for hover) */
 const FILTERED_PRODUCT_PROJECTION = `{
   _id,
@@ -126,36 +113,6 @@ export const FEATURED_PRODUCTS_QUERY = defineQuery(`*[
 }`);
 
 /**
- * Store-scoped featured products for storefront.
- */
-export const STOREFRONT_FEATURED_PRODUCTS_QUERY = defineQuery(`*[
-  _type == "product"
-  && featured == true
-  && stock > 0
-  ${STOREFRONT_STORE_CONDITION}
-] | order(name asc) [0...6] {
-  _id,
-  name,
-  "slug": slug.current,
-  description,
-  price,
-  "images": images[]{
-    _key,
-    asset->{
-      _id,
-      url
-    },
-    hotspot
-  },
-  category->{
-    _id,
-    title,
-    "slug": slug.current
-  },
-  stock
-}`);
-
-/**
  * Get products by category slug
  */
 export const PRODUCTS_BY_CATEGORY_QUERY = defineQuery(`*[
@@ -190,40 +147,6 @@ export const PRODUCTS_BY_CATEGORY_QUERY = defineQuery(`*[
 export const PRODUCT_BY_SLUG_QUERY = defineQuery(`*[
   _type == "product"
   && slug.current == $slug
-][0] {
-  _id,
-  name,
-  "slug": slug.current,
-  description,
-  price,
-  "images": images[]{
-    _key,
-    asset->{
-      _id,
-      url
-    },
-    hotspot
-  },
-  category->{
-    _id,
-    title,
-    "slug": slug.current
-  },
-  material,
-  color,
-  dimensions,
-  stock,
-  featured,
-  assemblyRequired
-}`);
-
-/**
- * Store-scoped product detail by slug for storefront.
- */
-export const STOREFRONT_PRODUCT_BY_SLUG_QUERY = defineQuery(`*[
-  _type == "product"
-  && slug.current == $slug
-  ${STOREFRONT_STORE_CONDITION}
 ][0] {
   _id,
   name,
@@ -302,13 +225,6 @@ export const FILTER_PRODUCTS_BY_NAME_QUERY = defineQuery(
 );
 
 /**
- * Store-scoped filter products - ordered by name (A-Z).
- */
-export const STOREFRONT_FILTER_PRODUCTS_BY_NAME_QUERY = defineQuery(
-  `*[${STOREFRONT_PRODUCT_FILTER_CONDITIONS}] | order(name asc) ${FILTERED_PRODUCT_PROJECTION}`
-);
-
-/**
  * Filter products - ordered by price ascending
  * Returns up to 4 images for hover preview in product cards
  */
@@ -317,25 +233,11 @@ export const FILTER_PRODUCTS_BY_PRICE_ASC_QUERY = defineQuery(
 );
 
 /**
- * Store-scoped filter products - ordered by price ascending.
- */
-export const STOREFRONT_FILTER_PRODUCTS_BY_PRICE_ASC_QUERY = defineQuery(
-  `*[${STOREFRONT_PRODUCT_FILTER_CONDITIONS}] | order(price asc) ${FILTERED_PRODUCT_PROJECTION}`
-);
-
-/**
  * Filter products - ordered by price descending
  * Returns up to 4 images for hover preview in product cards
  */
 export const FILTER_PRODUCTS_BY_PRICE_DESC_QUERY = defineQuery(
   `*[${PRODUCT_FILTER_CONDITIONS}] | order(price desc) ${FILTERED_PRODUCT_PROJECTION}`
-);
-
-/**
- * Store-scoped filter products - ordered by price descending.
- */
-export const STOREFRONT_FILTER_PRODUCTS_BY_PRICE_DESC_QUERY = defineQuery(
-  `*[${STOREFRONT_PRODUCT_FILTER_CONDITIONS}] | order(price desc) ${FILTERED_PRODUCT_PROJECTION}`
 );
 
 /**
@@ -348,40 +250,11 @@ export const FILTER_PRODUCTS_BY_RELEVANCE_QUERY = defineQuery(
 );
 
 /**
- * Store-scoped filter products - ordered by relevance.
- */
-export const STOREFRONT_FILTER_PRODUCTS_BY_RELEVANCE_QUERY = defineQuery(
-  `*[${STOREFRONT_PRODUCT_FILTER_CONDITIONS}] | ${RELEVANCE_SCORE} | order(_score desc, name asc) ${FILTERED_PRODUCT_PROJECTION}`
-);
-
-/**
  * Get products by IDs (for cart/checkout)
  */
 export const PRODUCTS_BY_IDS_QUERY = defineQuery(`*[
   _type == "product"
   && _id in $ids
-] {
-  _id,
-  name,
-  "slug": slug.current,
-  price,
-  "image": images[0]{
-    asset->{
-      _id,
-      url
-    },
-    hotspot
-  },
-  stock
-}`);
-
-/**
- * Store-scoped products by IDs for cart and checkout validation.
- */
-export const STOREFRONT_PRODUCTS_BY_IDS_QUERY = defineQuery(`*[
-  _type == "product"
-  && _id in $ids
-  ${STOREFRONT_STORE_CONDITION}
 ] {
   _id,
   name,
@@ -458,48 +331,6 @@ export const AI_SEARCH_PRODUCTS_QUERY = defineQuery(`*[
   && ($color == "" || color == $color)
   && ($minPrice == 0 || price >= $minPrice)
   && ($maxPrice == 0 || price <= $maxPrice)
-] | order(name asc) [0...20] {
-  _id,
-  name,
-  "slug": slug.current,
-  description,
-  price,
-  "image": images[0]{
-    asset->{
-      _id,
-      url
-    }
-  },
-  category->{
-    _id,
-    title,
-    "slug": slug.current
-  },
-  material,
-  color,
-  dimensions,
-  stock,
-  featured,
-  assemblyRequired
-}`);
-
-/**
- * Store-scoped AI search query for storefront assistant.
- */
-export const STOREFRONT_AI_SEARCH_PRODUCTS_QUERY = defineQuery(`*[
-  _type == "product"
-  && (
-    $searchQuery == ""
-    || name match $searchQuery + "*"
-    || description match $searchQuery + "*"
-    || category->title match $searchQuery + "*"
-  )
-  && ($categorySlug == "" || category->slug.current == $categorySlug)
-  && ($material == "" || material == $material)
-  && ($color == "" || color == $color)
-  && ($minPrice == 0 || price >= $minPrice)
-  && ($maxPrice == 0 || price <= $maxPrice)
-  ${STOREFRONT_STORE_CONDITION}
 ] | order(name asc) [0...20] {
   _id,
   name,

@@ -1,19 +1,19 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
 import {
-  Sparkles,
-  TrendingUp,
-  TrendingDown,
-  Minus,
-  Package,
   AlertTriangle,
   CheckCircle,
-  RefreshCw,
-  Loader2,
-  Lightbulb,
   Clock,
+  Lightbulb,
+  Loader2,
+  Minus,
+  Package,
+  RefreshCw,
+  Sparkles,
+  TrendingDown,
+  TrendingUp,
 } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
@@ -64,7 +64,7 @@ function AIInsightsCardSkeleton() {
   return (
     <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
       <div className="mb-6 flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-linear-to-br from-violet-500 to-purple-600">
           <Sparkles className="h-5 w-5 text-white" />
         </div>
         <div>
@@ -183,7 +183,7 @@ export function AIInsightsCard() {
       {/* Header */}
       <div className="flex items-center justify-between border-b border-zinc-200 p-6 dark:border-zinc-800">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-purple-600">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-linear-to-br from-violet-500 to-purple-600">
             <Sparkles className="h-5 w-5 text-white" />
           </div>
           <div>

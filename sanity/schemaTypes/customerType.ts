@@ -30,13 +30,6 @@ export const customerType = defineType({
       description: "Clerk user ID for authentication",
     }),
     defineField({
-      name: "store",
-      type: "reference",
-      to: [{ type: "store" }],
-      group: "details",
-      description: "Store that owns this customer profile.",
-    }),
-    defineField({
       name: "stripeCustomerId",
       type: "string",
       group: "stripe",
@@ -59,14 +52,13 @@ export const customerType = defineType({
       email: "email",
       name: "name",
       stripeCustomerId: "stripeCustomerId",
-      storeName: "store.name",
     },
-    prepare({ email, name, stripeCustomerId, storeName }) {
+    prepare({ email, name, stripeCustomerId }) {
       return {
         title: name ?? email ?? "Unknown Customer",
         subtitle: stripeCustomerId
-          ? `${email ?? ""} • ${stripeCustomerId}${storeName ? ` • ${storeName}` : ""}`
-          : `${email ?? ""}${storeName ? ` • ${storeName}` : ""}`,
+          ? `${email ?? ""} • ${stripeCustomerId}`
+          : (email ?? ""),
       };
     },
   },
