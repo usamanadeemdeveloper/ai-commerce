@@ -41,7 +41,7 @@ function OrderRow(handle: DocumentHandle) {
   return (
     <Link
       href={`/admin/orders/${handle.documentId}`}
-      className="flex items-center justify-between rounded-lg border border-zinc-100 bg-zinc-50 p-3 transition-colors hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-800/50 dark:hover:bg-zinc-800"
+      className="flex flex-col gap-2 rounded-lg border border-zinc-100 bg-zinc-50 p-3 transition-colors hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-800/50 dark:hover:bg-zinc-800 sm:flex-row sm:items-center sm:justify-between"
     >
       <div className="min-w-0 flex-1">
         <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
@@ -51,7 +51,7 @@ function OrderRow(handle: DocumentHandle) {
           {data.email}
         </p>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between gap-3 sm:justify-end">
         <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
           {formatPrice(data.total)}
         </p>
@@ -66,12 +66,12 @@ function OrderRow(handle: DocumentHandle) {
 
 function OrderRowSkeleton() {
   return (
-    <div className="flex items-center justify-between rounded-lg border border-zinc-100 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-800/50">
+    <div className="flex flex-col gap-2 rounded-lg border border-zinc-100 bg-zinc-50 p-3 transition-colors hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-800/50 dark:hover:bg-zinc-800 sm:flex-row sm:items-center sm:justify-between">
       <div className="space-y-1">
         <Skeleton className="h-4 w-20" />
         <Skeleton className="h-3 w-32" />
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between gap-3 sm:justify-end">
         <Skeleton className="h-4 w-16" />
         <Skeleton className="h-5 w-16" />
       </div>

@@ -32,8 +32,11 @@ export function CartSummary({ hasStockIssues = false }: CartSummaryProps) {
       </p>
       <div className="mt-4">
         {hasStockIssues ? (
-          <Button disabled className="w-full">
-            Resolve stock issues to checkout
+          <Button disabled className="w-full text-sm">
+            <span className="hidden sm:inline">
+              Resolve stock issues to checkout
+            </span>
+            <span className="sm:hidden">Fix stock issues first</span>
           </Button>
         ) : (
           <Button asChild className="w-full">

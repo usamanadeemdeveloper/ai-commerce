@@ -43,7 +43,7 @@ function LowStockProductRow(handle: DocumentHandle) {
   return (
     <Link
       href={`/admin/inventory/${handle.documentId}`}
-      className="flex items-center gap-3 rounded-lg border border-zinc-100 bg-zinc-50 p-3 transition-colors hover:border-zinc-200 hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-800/50 dark:hover:border-zinc-700 dark:hover:bg-zinc-800"
+      className="flex flex-wrap items-center gap-3 rounded-lg border border-zinc-100 bg-zinc-50 p-3 transition-colors hover:border-zinc-200 hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-800/50 dark:hover:border-zinc-700 dark:hover:bg-zinc-800"
     >
       <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-zinc-200 dark:bg-zinc-700">
         {data.image?.asset?.url ? (
@@ -77,7 +77,7 @@ function LowStockProductRow(handle: DocumentHandle) {
 
 function LowStockProductRowSkeleton() {
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-zinc-100 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-800/50">
+    <div className="flex flex-wrap items-center gap-3 rounded-lg border border-zinc-100 bg-zinc-50 p-3 transition-colors hover:border-zinc-200 hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-800/50 dark:hover:border-zinc-700 dark:hover:bg-zinc-800">
       <Skeleton className="h-10 w-10 rounded-md" />
       <Skeleton className="h-4 flex-1" />
       <Skeleton className="h-5 w-16" />

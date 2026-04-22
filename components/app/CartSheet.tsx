@@ -7,13 +7,13 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { useCartStock } from "@/lib/hooks/useCartStock";
 import {
-  useCartItems,
-  useCartIsOpen,
   useCartActions,
+  useCartIsOpen,
+  useCartItems,
   useTotalItems,
 } from "@/lib/store/cart-store-provider";
-import { useCartStock } from "@/lib/hooks/useCartStock";
 import { CartItem } from "./CartItem";
 import { CartSummary } from "./CartSummary";
 
@@ -26,8 +26,8 @@ export function CartSheet() {
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && closeCart()}>
-      <SheetContent className="flex w-full flex-col sm:max-w-lg gap-0">
-        <SheetHeader className="border-b border-zinc-200 dark:border-zinc-800">
+      <SheetContent className="flex w-full flex-col sm:max-w-lg gap-0 px-0">
+        <SheetHeader className="border-b border-zinc-200 dark:border-zinc-800 px-4 py-3">
           <SheetTitle className="flex items-center gap-2">
             <ShoppingBag className="h-5 w-5" />
             Shopping Cart ({totalItems})
@@ -51,7 +51,7 @@ export function CartSheet() {
           <>
             {/* Stock Issues Banner */}
             {hasStockIssues && !isLoading && (
-              <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950/50 dark:text-amber-200">
+              <div className="mx-4 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950/50 dark:text-amber-200">
                 <AlertTriangle className="h-4 w-4 shrink-0" />
                 <span>
                   Some items have stock issues. Please review before checkout.

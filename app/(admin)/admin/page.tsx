@@ -5,7 +5,13 @@ import {
   createDocumentHandle,
   useApplyDocumentActions,
 } from "@sanity/sdk-react";
-import { Loader2, Package, Plus, ShoppingCart, TrendingUp } from "lucide-react";
+import {
+  AlertTriangle,
+  Loader2,
+  Package,
+  Plus,
+  ShoppingCart,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import {
@@ -77,7 +83,7 @@ export default function AdminDashboard() {
         />
         <StatCard
           title="Low Stock Items"
-          icon={TrendingUp}
+          icon={AlertTriangle}
           documentType="product"
           filter="stock <= 5"
           href="/admin/inventory"

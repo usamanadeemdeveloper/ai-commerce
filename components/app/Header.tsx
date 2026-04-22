@@ -6,6 +6,7 @@ import { useChatActions, useIsChatOpen } from "@/lib/store/chat-store-provider";
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import { Package, ShoppingBag, Sparkles, User } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export function Header() {
   const { isSignedIn } = useUser();
@@ -14,6 +15,17 @@ export function Header() {
   const { openChat } = useChatActions();
   const isChatOpen = useIsChatOpen();
   const totalItems = useTotalItems();
+
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 640px)");
+    const handler = () => setIsMobile(mq.matches);
+
+    handler();
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 border-b border-zinc-200 bg-white/80 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/80">
@@ -29,7 +41,7 @@ export function Header() {
         <div className="flex items-center gap-2">
           {/* My Orders - Only when signed in */}
           {isSignedIn && (
-            <Button asChild>
+            <Button asChild className="hidden sm:inline-flex">
               <Link href="/orders" className="flex items-center gap-2">
                 <Package className="h-5 w-5" />
                 <span className="text-sm font-medium">My Orders</span>
@@ -41,7 +53,7 @@ export function Header() {
           {!isChatOpen && (
             <Button
               onClick={openChat}
-              className="gap-2 bg-linear-to-r from-amber-500 to-orange-500 text-white shadow-md shadow-amber-200/50 transition-all hover:from-amber-600 hover:to-orange-600 hover:shadow-lg hover:shadow-amber-300/50 dark:shadow-amber-900/30 dark:hover:shadow-amber-800/40"
+              className="hidden sm:inline-flex gap-2 bg-linear-to-r from-amber-500 to-orange-500 text-white shadow-md shadow-amber-200/50 transition-all hover:from-amber-600 hover:to-orange-600 hover:shadow-lg hover:shadow-amber-300/50 dark:shadow-amber-900/30 dark:hover:shadow-amber-800/40"
             >
               <Sparkles className="h-4 w-4" />
               <span className="text-sm font-medium">Ask AI</span>
@@ -52,7 +64,7 @@ export function Header() {
           <Button
             variant="ghost"
             size="icon"
-            className="relative"
+            className="relative hidden sm:inline-flex"
             onClick={openCart}
           >
             <ShoppingBag className="h-5 w-5" />
@@ -75,11 +87,33 @@ export function Header() {
               }}
             >
               <UserButton.MenuItems>
-                <UserButton.Link
-                  label="My Orders"
-                  labelIcon={<Package className="h-4 w-4" />}
-                  href="/orders"
-                />
+                {isMobile ? (
+                  <UserButton.Link
+                    label="My Orders"
+                    labelIcon={<Package className="h-4 w-4" />}
+                    href="/orders"
+                  />
+                ) : null}
+
+                {isMobile && !isChatOpen ? (
+                  <UserButton.Action
+                    label="Ask AI"
+                    labelIcon={<Sparkles className="h-4 w-4" />}
+                    onClick={openChat}
+                  />
+                ) : null}
+
+                {isMobile ? (
+                  <UserButton.Action
+                    label={
+                      totalItems > 0
+                        ? `Cart (${totalItems > 99 ? "99+" : totalItems})`
+                        : "Cart"
+                    }
+                    labelIcon={<ShoppingBag className="h-4 w-4" />}
+                    onClick={openCart}
+                  />
+                ) : null}
               </UserButton.MenuItems>
             </UserButton>
           ) : (

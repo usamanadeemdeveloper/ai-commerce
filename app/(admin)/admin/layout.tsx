@@ -154,8 +154,8 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 pt-14 lg:ml-64 lg:pt-0">
-          <div className="p-4 lg:p-8">{children}</div>
+        <main className="flex-1 min-w-0 overflow-x-hidden pt-14 lg:ml-64 lg:pt-0">
+          <div className="p-4 sm:p-6 lg:p-8">{children}</div>
         </main>
       </div>
     </Providers>

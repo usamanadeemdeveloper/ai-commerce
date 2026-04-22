@@ -27,14 +27,14 @@ export function CartItem({ item, stockInfo }: CartItemProps) {
   return (
     <div
       className={cn(
-        "flex gap-4 py-4",
+        "flex gap-3 py-4 sm:gap-4",
         hasIssue && "rounded-lg bg-red-50 p-3 dark:bg-red-950/30",
       )}
     >
       {/* Image */}
       <div
         className={cn(
-          "relative h-20 w-20 shrink-0 overflow-hidden rounded-md bg-zinc-100 dark:bg-zinc-800",
+          "relative h-16 w-16 sm:h-20 sm:w-20 shrink-0 overflow-hidden rounded-md bg-zinc-100 dark:bg-zinc-800",
           isOutOfStock && "opacity-50",
         )}
       >
@@ -55,11 +55,11 @@ export function CartItem({ item, stockInfo }: CartItemProps) {
 
       {/* Details */}
       <div className="flex flex-1 flex-col">
-        <div className="flex justify-between">
+        <div className="flex items-start justify-between gap-1">
           <Link
             href={`/products/${item.productId}`}
             className={cn(
-              "font-medium text-zinc-900 hover:text-zinc-600 dark:text-zinc-100 dark:hover:text-zinc-300",
+              "font-medium text-sm sm:text-base leading-snug text-zinc-900 hover:text-zinc-600 dark:text-zinc-100 dark:hover:text-zinc-300",
               isOutOfStock && "text-zinc-400 dark:text-zinc-500",
             )}
           >
@@ -68,10 +68,10 @@ export function CartItem({ item, stockInfo }: CartItemProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-zinc-400 hover:text-red-500"
+            className="h-7 w-7 shrink-0 text-zinc-400 hover:text-red-500"
             onClick={() => removeItem(item.productId)}
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="h-3.5 w-3.5" />
             <span className="sr-only">Remove {item.name}</span>
           </Button>
         </div>
