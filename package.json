@@ -9,7 +9,7 @@
     "lint": "biome check",
     "format": "biome format --write",
     "typecheck": "tsc --noEmit",
-    "typegen": "sanity schema extract && sanity typegen generate --enforce-required-fields",
+    "typegen": "sanity schema extract && sanity typegen generate",
     "sanity:fresh-start": "tsx scripts/sanity-fresh-start.ts",
     "sanity:import": "pnpm dlx sanity dataset import sample-data.ndjson production --replace"
   },
