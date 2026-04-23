@@ -78,14 +78,14 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
         {/* Sidebar */}
         <aside
           className={cn(
-            "fixed left-0 top-0 z-50 h-screen w-64 border-r border-zinc-200 bg-white transition-transform dark:border-zinc-800 dark:bg-zinc-900",
+            "fixed left-0 top-0 z-50 h-dvh w-64 border-r border-zinc-200 bg-white transition-transform dark:border-zinc-800 dark:bg-zinc-900",
             // Mobile: slide in/out
             sidebarOpen ? "translate-x-0" : "-translate-x-full",
             // Desktop: always visible
             "lg:translate-x-0",
           )}
         >
-          <div className="flex h-full flex-col">
+          <div className="flex h-full flex-col overflow-y-auto">
             {/* Logo */}
             <div className="flex h-16 items-center border-b border-zinc-200 px-6 dark:border-zinc-800">
               <Link
