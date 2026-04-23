@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button";
 import { useCartActions, useTotalItems } from "@/lib/store/cart-store-provider";
 import { useChatActions, useIsChatOpen } from "@/lib/store/chat-store-provider";
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
-import { Package, ShoppingBag, Sparkles, User } from "lucide-react";
+import { LayoutDashboard, Package, Shield, ShoppingBag, Sparkles, User } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export function Header() {
-  const { isSignedIn } = useUser();
+  const { isSignedIn, user } = useUser();
+
+  const isAdmin = user?.publicMetadata?.role === "admin";
 
   const { openCart } = useCartActions();
   const { openChat } = useChatActions();
@@ -39,6 +41,25 @@ export function Header() {
 
         {/* Actions */}
         <div className="flex items-center gap-2">
+          {/* Admin Links (ONLY visible for admin) */}
+          {isAdmin && (
+            <>
+              <Button asChild className="hidden sm:inline-flex">
+                <Link href="/admin" className="flex items-center gap-2">
+                  <Shield className="h-4 w-4" />
+                  Admin
+                </Link>
+              </Button>
+
+              <Button asChild className="hidden sm:inline-flex">
+                <Link href="/studio" className="flex items-center gap-2">
+                  <LayoutDashboard className="h-4 w-4" />
+                  Studio
+                </Link>
+              </Button>
+            </>
+          )}
+
           {/* My Orders - Only when signed in */}
           {isSignedIn && (
             <Button asChild className="hidden sm:inline-flex">
@@ -53,7 +74,7 @@ export function Header() {
           {!isChatOpen && (
             <Button
               onClick={openChat}
-              className="hidden sm:inline-flex gap-2 bg-linear-to-r from-amber-500 to-orange-500 text-white shadow-md shadow-amber-200/50 transition-all hover:from-amber-600 hover:to-orange-600 hover:shadow-lg hover:shadow-amber-300/50 dark:shadow-amber-900/30 dark:hover:shadow-amber-800/40"
+              className="hidden sm:inline-flex gap-2 bg-linear-to-r from-amber-500 to-orange-500 text-white shadow-md shadow-amber-200/50 transition-all hover:from-amber-600 hover:to-orange-600 hover:shadow-lg hover:shadow-amber-300/50 dark:shadow-amber-900/30 dark:hover:shadow-amber-800/40 cursor-pointer"
             >
               <Sparkles className="h-4 w-4" />
               <span className="text-sm font-medium">Ask AI</span>
@@ -64,7 +85,7 @@ export function Header() {
           <Button
             variant="ghost"
             size="icon"
-            className="relative hidden sm:inline-flex"
+            className="relative hidden sm:inline-flex cursor-pointer"
             onClick={openCart}
           >
             <ShoppingBag className="h-5 w-5" />
@@ -112,6 +133,23 @@ export function Header() {
                     }
                     labelIcon={<ShoppingBag className="h-4 w-4" />}
                     onClick={openCart}
+                  />
+                ) : null}
+
+                {/* Admin mobile shortcut */}
+                {isMobile && isAdmin ? (
+                  <UserButton.Link
+                    label="Admin Panel"
+                    labelIcon={<Shield className="h-4 w-4" />}
+                    href="/admin"
+                  />
+                ) : null}
+
+                {isMobile && isAdmin ? (
+                  <UserButton.Link
+                    label="Studio"
+                    labelIcon={<LayoutDashboard className="h-4 w-4" />}
+                    href="/studio"
                   />
                 ) : null}
               </UserButton.MenuItems>
