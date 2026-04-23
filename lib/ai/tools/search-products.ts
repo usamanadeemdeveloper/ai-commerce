@@ -1,12 +1,12 @@
 import { tool } from "ai";
 import { z } from "zod";
+import type { SearchProduct } from "@/lib/ai/types";
+import { COLOR_VALUES, MATERIAL_VALUES } from "@/lib/constants/filters";
+import { getStockMessage, getStockStatus } from "@/lib/constants/stock";
+import { formatPrice } from "@/lib/utils";
 import { sanityFetch } from "@/sanity/lib/live";
 import { AI_SEARCH_PRODUCTS_QUERY } from "@/sanity/queries/products";
-import { formatPrice } from "@/lib/utils";
-import { getStockStatus, getStockMessage } from "@/lib/constants/stock";
-import { MATERIAL_VALUES, COLOR_VALUES } from "@/lib/constants/filters";
-import type { AI_SEARCH_PRODUCTS_QUERYResult } from "@/sanity.types";
-import type { SearchProduct } from "@/lib/ai/types";
+import type { AI_SEARCH_PRODUCTS_QUERY_RESULT } from "@/sanity.types";
 
 const productSearchSchema = z.object({
   query: z
@@ -14,14 +14,14 @@ const productSearchSchema = z.object({
     .optional()
     .default("")
     .describe(
-      "Search term to find products by name, description, or category (e.g., 'oak table', 'leather sofa', 'dining')"
+      "Search term to find products by name, description, or category (e.g., 'oak table', 'leather sofa', 'dining')",
     ),
   category: z
     .string()
     .optional()
     .default("")
     .describe(
-      "Filter by category slug (e.g., 'sofas', 'tables', 'chairs', 'storage')"
+      "Filter by category slug (e.g., 'sofas', 'tables', 'chairs', 'storage')",
     ),
   material: z
     .enum(["", ...MATERIAL_VALUES])
@@ -93,7 +93,7 @@ export const searchProductsTool = tool({
 
       // Format the results with stock status for the AI to communicate
       const formattedProducts: SearchProduct[] = (
-        products as AI_SEARCH_PRODUCTS_QUERYResult
+        products as AI_SEARCH_PRODUCTS_QUERY_RESULT
       ).map((product) => ({
         id: product._id,
         name: product.name ?? null,

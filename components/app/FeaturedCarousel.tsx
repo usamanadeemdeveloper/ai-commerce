@@ -16,18 +16,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn, formatPrice } from "@/lib/utils";
-import type { FEATURED_PRODUCTS_QUERYResult } from "@/sanity.types";
+import type { FEATURED_PRODUCTS_QUERY_RESULT } from "@/sanity.types";
 
-type FeaturedProduct = FEATURED_PRODUCTS_QUERYResult[number];
+type FeaturedProduct = FEATURED_PRODUCTS_QUERY_RESULT[number];
 
 interface FeaturedCarouselProps {
-  products: FEATURED_PRODUCTS_QUERYResult;
+  products: FEATURED_PRODUCTS_QUERY_RESULT;
 }
 
 export function FeaturedCarousel({ products }: FeaturedCarouselProps) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
-  const [count, setCount] = useState(0);
+  const [_, setCount] = useState(0);
 
   useEffect(() => {
     if (!api) return;

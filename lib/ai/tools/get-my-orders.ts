@@ -1,13 +1,13 @@
 import { tool } from "ai";
 import { z } from "zod";
-import { sanityFetch } from "@/sanity/lib/live";
-import { ORDERS_BY_USER_QUERY } from "@/sanity/queries/orders";
 import {
-  ORDER_STATUS_VALUES,
   getOrderStatusEmoji,
+  ORDER_STATUS_VALUES,
 } from "@/lib/constants/orderStatus";
 import { formatPrice } from "@/lib/utils";
-import type { ORDERS_BY_USER_QUERYResult } from "@/sanity.types";
+import { sanityFetch } from "@/sanity/lib/live";
+import { ORDERS_BY_USER_QUERY } from "@/sanity/queries/orders";
+import type { ORDERS_BY_USER_QUERY_RESULT } from "@/sanity.types";
 
 const getMyOrdersSchema = z.object({
   status: z
@@ -66,10 +66,10 @@ export function createGetMyOrdersTool(userId: string | null) {
         console.log("[GetMyOrders] Orders found:", orders.length);
 
         // Filter by status if provided
-        let filteredOrders = orders as ORDERS_BY_USER_QUERYResult;
+        let filteredOrders = orders as ORDERS_BY_USER_QUERY_RESULT;
         if (status) {
           filteredOrders = filteredOrders.filter(
-            (order) => order.status === status
+            (order) => order.status === status,
           );
         }
 
@@ -94,10 +94,10 @@ export function createGetMyOrdersTool(userId: string | null) {
           statusDisplay: getOrderStatusEmoji(order.status),
           itemCount: order.itemCount ?? 0,
           itemNames: (order.itemNames ?? []).filter(
-            (name): name is string => name !== null
+            (name): name is string => name !== null,
           ),
           itemImages: (order.itemImages ?? []).filter(
-            (url): url is string => url !== null
+            (url): url is string => url !== null,
           ),
           createdAt: order.createdAt,
           orderUrl: `/orders/${order._id}`,

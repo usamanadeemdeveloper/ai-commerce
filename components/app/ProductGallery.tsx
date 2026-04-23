@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
-import type { PRODUCT_BY_SLUG_QUERYResult } from "@/sanity.types";
+import type { PRODUCT_BY_SLUG_QUERY_RESULT } from "@/sanity.types";
 
 type ProductImages = NonNullable<
-  NonNullable<PRODUCT_BY_SLUG_QUERYResult>["images"]
+  NonNullable<PRODUCT_BY_SLUG_QUERY_RESULT>["images"]
 >;
 
 interface ProductGalleryProps {
