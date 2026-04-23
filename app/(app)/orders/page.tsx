@@ -9,6 +9,8 @@ import { getOrderStatus } from "@/lib/constants/orderStatus";
 import { formatPrice, formatDate, formatOrderNumber } from "@/lib/utils";
 import { StackedProductImages } from "@/components/app/StackedProductImages";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Your Orders | Furniture Shop",
   description: "View your order history",
